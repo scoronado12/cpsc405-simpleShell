@@ -17,11 +17,14 @@ char** split(char *str, char *tok){
 		}	
 	}
 	char *str_array[num_spaces + 1];
-	char *token = strtok(str, tok);
+	str_array[num_spaces + 1] = NULL;
+	char token = strtok(str, tok);
 	int i = 0;
-	while(token != NULL){
-		str_array[i] = token;
-		token = strtok(NULL, tok); 
+	while(token[i] != NULL){
+		strcpy(str_array[i],token);
+		//*str_array[i] = token;
+		token = strtok(NULL, tok);
+	        i++;	
 	}
 
 	return str_array;
