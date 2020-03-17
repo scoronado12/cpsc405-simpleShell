@@ -15,7 +15,10 @@ int main(){
 		    printf("%s\n", cmd_arr[i]);
 
 
-        //TODO detection if we have & > or <
+
+
+
+        //TODO detection if we have & > or < and |
         //else fork() and exec()
         
 
