@@ -11,7 +11,7 @@ int main(){
 
 	char **cmd_arr = split(cmd, " ");
 	for (int i = 0; i < 15; i++)
-		printf("%s \n", cmd_arr[i]);
+		printf("%s", cmd_arr);
 
 
     }

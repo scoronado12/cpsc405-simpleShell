@@ -16,8 +16,15 @@ char **split(char *str, char *tok){
 			num_spaces++;
 		}	
 	}
+	char *str_array[num_spaces + 1];
+	char *token = strtok(str, tok);
+	int i = 0;
+	while(token != NULL){
+		str_array[i] = token;
+		token = strtok(NULL, tok); 
+	}
 
-	char str_arr[num_spaces + 1];
-	str_arr[num_spaces +1] = NULL;
+	return str_array;
+
 
 }
