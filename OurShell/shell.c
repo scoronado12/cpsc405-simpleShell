@@ -16,12 +16,12 @@ char** split(char *str, char *tok){
 			num_spaces++;
 		}	
 	}
-	char *str_array[num_spaces + 1];
+	char **str_array = malloc(num_spaces *sizeof(char));
 	str_array[num_spaces + 1] = NULL;
-	char token = strtok(str, tok);
+	char *token = strtok(str, tok);
 	int i = 0;
-	while(token[i] != NULL){
-		strcpy(str_array[i],token);
+	while(token != NULL){
+		str_array[i] = token;
 		//*str_array[i] = token;
 		token = strtok(NULL, tok);
 	        i++;	
