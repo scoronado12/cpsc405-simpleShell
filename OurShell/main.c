@@ -6,14 +6,21 @@
 int main(){
 
     while (1){
-        char *cmd;
 
-        printf("%s@nenoShell$ ", getenv("USER"));
-        cmd = sh_readline();
+        printf("%s@nenbarsh$ ", getenv("USER"));
+        char *cmd = sh_readline();
 
-	char **cmd_arr = split(cmd, " ");
-	for (int i = 0; cmd_arr[i] != NULL ; i++)
-		printf("%s\n", cmd_arr[i]);
+	    char **cmd_arr = split(cmd, " ");
+	    for (int i = 0; cmd_arr[i] != NULL ; i++)
+		    printf("%s\n", cmd_arr[i]);
+
+
+        //TODO detection if we have & > or <
+        //else fork() and exec()
+        
+
+        free(cmd);
+        free(cmd_arr);
 
 
     }
