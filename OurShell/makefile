@@ -1,6 +1,6 @@
 shell: shell.o
-	gcc main.c shell.o
+	gcc -g main.c shell.o -o our_shell
 shell.o:
-	gcc -c shell.c -o shell.o
+	gcc -g -c shell.c -o shell.o
 clean:
-	rm -f *.o shell
+	rm -f *.o our_shell vgcore.*

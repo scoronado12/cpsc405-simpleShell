@@ -11,7 +11,7 @@ char *sh_readline(){
 
 char **split(char *str, char *tok){
 	int num_spaces = 0;
-	for (int i = 0 ; strcmp(str[i], '\0'); i++){
+	for (int i = 0 ; str[i] == NULL ; i++){
 		if (strcmp(str[i], " ")){
 			num_spaces++;
 		}	

@@ -10,8 +10,8 @@ int main(){
         cmd = sh_readline();
 
 	char **cmd_arr = split(cmd, " ");
-	for (int i = 0; i < 15; i++)
-		printf("%s", cmd_arr);
+	for (int i = 0; cmd_arr[i] == NULL; i++)
+		printf("%s", cmd_arr[i]);
 
 
     }
