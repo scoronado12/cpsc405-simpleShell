@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "shell.h"
+
 int main(){
 
     while (1){
@@ -10,7 +12,7 @@ int main(){
         cmd = sh_readline();
 
 	char **cmd_arr = split(cmd, " ");
-	for (int i = 0; cmd_arr[i] == NULL; i++)
+	for (int i = 0; i < 3 ; i++)
 		printf("%s", cmd_arr[i]);
 
 

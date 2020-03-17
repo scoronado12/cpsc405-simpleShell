@@ -9,10 +9,10 @@ char *sh_readline(){
     return line;
 }
 
-char **split(char *str, char *tok){
+char** split(char *str, char *tok){
 	int num_spaces = 0;
-	for (int i = 0 ; str[i] == NULL ; i++){
-		if (strcmp(str[i], " ")){
+	for (int i = 0 ; str[i] != '\n' ; i++){
+		if (str[i] == ' '){
 			num_spaces++;
 		}	
 	}
