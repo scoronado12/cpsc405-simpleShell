@@ -10,14 +10,25 @@ int main(){
     while (1){
 
         printf("[%s@nenbarsh]$ ", getenv("USER"));
+        int status = NULL;
         char *cmd = sh_readline();
+        /*TODO catch signal 130 here (ctrl+ c) and pass to status*/
+        int fork_rc = fork();
+        char **cmd_arr;
 
+        if(fork_rc < 0){
+            printf("Fork Failed!\n");
+		}
+        if (fork_rc == 0){
+            printf("Forked\n");
+            cmd_arr = split(cmd, " ");
 
+            status = parseNrun(get_size(cmd_arr), cmd_arr);
 
-	    char **cmd_arr = split(cmd, " ");
+            
+        }
 
-
-        int status = parseNrun(get_size(cmd_arr), cmd_arr);
+        wait(NULL);
 
         if (status == 0){
             printf("✓ ");

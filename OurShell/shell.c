@@ -5,6 +5,7 @@
 
 #define PIPE_BUFF 255
 
+
 /*This is used to read a string without assigning a buffer size*/
 
 char *sh_readline(){
@@ -63,6 +64,27 @@ int parseNrun(int argc, char **line){
 			printf("pipe!\n");
 		}else if (strcmp(line[i], "&") == 0){
 			printf("Background\n");
+		}else{
+			printf("Regular command\n");
+
+			int rc = fork();
+
+			if(rc < 0){
+				printf("Fork Failed!\n");
+				break;
+			}
+
+			if (rc == 0){
+				printf("forked\n");
+				/*safe to exec within child*/
+				printf("execute %s\n", line[0]);
+			}
+			wait(NULL);
+
+
+
+
+
 		}
 
 	}
