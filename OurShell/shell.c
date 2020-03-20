@@ -5,12 +5,21 @@
 
 #define PIPE_BUFF 255
 
+/** This is used to get the current working directory - just like bash*/
 
+char *pwd(){
+	char buff[100];
+	getcwd(buff, sizeof(buff));
+	char *dir = malloc(sizeof(buff));
+	strcpy(dir, buff);
+	return dir;
+
+}
 /*This is used to read a string without assigning a buffer size*/
 
 char *sh_readline(){
     char *line = NULL;
-    ssize_t buffer_sz = 0;	
+    size_t buffer_sz = 0;	
     getline(&line, &buffer_sz, stdin);
     return line;
 }
@@ -18,14 +27,14 @@ char *sh_readline(){
 /*This Splits the string and returns it as an array*/
 
 char** split(char *str, char *tok){
-	int num_spaces = 0;
+	int num_toks = 0;
 	for (int i = 0 ; str[i] != '\n' ; i++){
-		if (str[i] == ' '){
-			num_spaces++;
+		if (str[i] == tok){
+			num_toks++;
 		}	
 	}
-	char **str_array = malloc(num_spaces *sizeof(char));
-	str_array[num_spaces + 1] = NULL;
+	char **str_array = malloc(num_toks * sizeof(char));
+	str_array[num_toks + 1] = NULL;
 	char *token = strtok(str, tok);
 	int i = 0;
 	while(token != NULL){
@@ -52,9 +61,10 @@ int get_size(char **line){
 /*Parses Through the array and decides what to do with it*/
 
 int parseNrun(int argc, char **line){
-	/*parse through words of the split string*/
-	for (int i = 0; i < argc; i++){
+	/*parse through words of the split string don't run loop if simply pressed enter*/
+	for (int i = 0; i < argc && (!strcmp(line[0],"\n") == 0); i++){
 		printf("Checking %s\n", line[i]);
+
 
 		if (strcmp(line[i], ">") == 0){
 			printf("Output redirection\n");
@@ -80,9 +90,6 @@ int parseNrun(int argc, char **line){
 				printf("execute %s\n", line[0]);
 			}
 			wait(NULL);
-
-
-
 
 
 		}

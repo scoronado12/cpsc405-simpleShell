@@ -2,14 +2,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h> 
+#include <unistd.h>
 #include "shell.h"
 
 
 int main(){
 
     while (1){
+        char *dir = pwd();
+        printf("[%s@nenbarsh %s]$ ", getenv("USER"), dir);
 
-        printf("[%s@nenbarsh]$ ", getenv("USER"));
         int status = NULL;
         char *cmd = sh_readline();
         /*TODO catch signal 130 here (ctrl+ c) and pass to status*/
@@ -20,7 +22,7 @@ int main(){
             printf("Fork Failed!\n");
 		}
         if (fork_rc == 0){
-            printf("Forked\n");
+            printf("Forked to parse\n");
             cmd_arr = split(cmd, " ");
 
             status = parseNrun(get_size(cmd_arr), cmd_arr);
@@ -37,14 +39,6 @@ int main(){
         }
 
 
-		    
-
-
-
-
-
-        //TODO detection if we have & > or < and |
-        //else fork() and exec()
         
 
         free(cmd);
