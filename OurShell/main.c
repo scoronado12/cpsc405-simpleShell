@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h> 
 #include "shell.h"
+
 
 int main(){
 
@@ -10,19 +12,20 @@ int main(){
         printf("[%s@nenbarsh]$ ", getenv("USER"));
         char *cmd = sh_readline();
 
+
+
 	    char **cmd_arr = split(cmd, " ");
-	    for (int i = 0; cmd_arr[i] != NULL ; i++){
-            //printf("%s\n", cmd_arr[i]);
-            if (strcmp(cmd_arr[i],">") == 0){
-                printf("Output redirection\n");
-            }else if (strcmp(cmd_arr[i],"<") == 0){
-                printf("input redirection\n");
-            } else if (strcmp(cmd_arr[i],"|") == 0){
-                printf("pipe!\n");
-            } else if (strcmp(cmd_arr[i], "&")== 0){
-                printf("Background\n");
-            }
+
+
+        int status = parseNrun(get_size(cmd_arr), cmd_arr);
+
+        if (status == 0){
+            printf("✓ ");
+        } else{
+            printf("x ");
         }
+
+
 		    
 
 
