@@ -16,16 +16,16 @@ int main(){
         char *cmd = sh_readline();
         /*TODO catch signal 130 here (ctrl+ c) and pass to status*/
         int fork_rc = fork();
-        char **cmd_arr;
+        char **argv;
 
         if(fork_rc < 0){
             printf("Fork Failed!\n");
 		}
         if (fork_rc == 0){
             printf("Forked to parse\n");
-            cmd_arr = split(cmd, " ");
-
-            status = parseNrun(get_size(cmd_arr), cmd_arr);
+            argv = split(cmd, " ");
+            int argc = get_size(argv);
+            status = parseNrun(argc, argv);
 
             
         }
@@ -42,7 +42,7 @@ int main(){
         
 
         free(cmd);
-        free(cmd_arr);
+        free(argv);
 
 
     }

@@ -22,6 +22,9 @@ char *sh_readline(){
     char *line = NULL;
     size_t buffer_sz = 0;	
     getline(&line, &buffer_sz, stdin);
+	char *pos = strchrnul(line, '\n');
+	pos = '\0';
+
     return line;
 }
 
@@ -44,6 +47,13 @@ char** split(char *str, char *tok){
 		token = strtok(NULL, tok);
 	        i++;	
 	}
+	/*clean each string of newlines*/
+	for (int i = 0; i < get_size(str_array); i++){//each string in array
+		for (int j = 0; j < strlen(str_array[i]); j++){ //each char in string
+			if (str_array[i][j] == '\n')
+				str_array[i][j] = '\0';
+		}
+	}
 
 	return str_array;
 
@@ -62,14 +72,17 @@ int get_size(char **line){
 /*Parses Through the array and decides what to do with it*/
 
 int parseNrun(int argc, char **line){
+	printf("argc: %d\n",argc);
+	line[argc] = NULL;
+
 	/**reset if parsed command is blank**/
-	if (strcmp(line[0],"\n") == 0)	
+	if (strcmp(line[0],"") == 0)	
 		return 0;
 	
-	line[get_size(line) + 1] = NULL;
+
 	/*parse through words of the split string don't run loop if simply pressed enter*/
 	for (int i = 0; i < argc; i++){
-		printf("Checking %s\n", line[i]);
+		//printf("Checking %s\n", line[i]);
 
 
 		if (strcmp(line[i], ">") == 0){
