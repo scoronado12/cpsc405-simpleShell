@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
 #include "shell.h"
 
 #define PIPE_BUFF 255
@@ -61,8 +62,13 @@ int get_size(char **line){
 /*Parses Through the array and decides what to do with it*/
 
 int parseNrun(int argc, char **line){
+	/**reset if parsed command is blank**/
+	if (strcmp(line[0],"\n") == 0)	
+		return 0;
+	
+	line[get_size(line) + 1] = NULL;
 	/*parse through words of the split string don't run loop if simply pressed enter*/
-	for (int i = 0; i < argc && (!strcmp(line[0],"\n") == 0); i++){
+	for (int i = 0; i < argc; i++){
 		printf("Checking %s\n", line[i]);
 
 
@@ -81,16 +87,25 @@ int parseNrun(int argc, char **line){
 
 			if(rc < 0){
 				printf("Fork Failed!\n");
-				break;
+				return 2;
 			}
-
+			int fp = 0;
 			if (rc == 0){
 				printf("forked\n");
 				/*safe to exec within child*/
 				printf("execute %s\n", line[0]);
+				fp = execvp(line[0],line);
+				if (fp == -1){
+					fprintf(stderr, "Error executing program - %s\n", strerror(errno));
+					return 2;
+				}
+				
 			}
-			wait(NULL);
 
+
+
+			wait(NULL);
+			break;
 
 		}
 
