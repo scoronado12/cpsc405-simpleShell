@@ -6,17 +6,19 @@
 #include "shell.h"
 
 
-int main(){
 
+int main(){
+    
+    char **argv;
+    char *cmd;
     while (1){
         char *dir = pwd();
         printf("[%s@nenbarsh %s]$ ", getenv("USER"), dir);
 
         int status = NULL;
-        char *cmd = sh_readline();
+        cmd = sh_readline();
         /*TODO catch signal 130 here (ctrl+ c) and pass to status*/
         int fork_rc = fork();
-        char **argv;
 
         if(fork_rc < 0){
             printf("Fork Failed!\n");
@@ -25,9 +27,14 @@ int main(){
             printf("Forked to parse\n");
             argv = split(cmd, " ");
             int argc = get_size(argv);
-            what_command(argc, argv);
-            status = normal_execute(argc, argv); /*status depends on if this command ran okay*/
+            if (strcmp(argv[0], "exit") == 0)
+                break;
 
+
+            int cmd_type = what_command(argc, argv);
+            if (cmd_type == REGULAR){
+                status = normal_execute(argc, argv); /*status depends on if this command ran okay*/
+            }
             
         }
 
@@ -47,6 +54,7 @@ int main(){
 
 
     }
-
+    free(cmd);
+    free(argv);
 
 }
