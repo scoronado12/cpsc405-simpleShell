@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include "shell.h"
 
-
+#define pass (void)0
 
 int main(){
     
@@ -17,7 +17,13 @@ int main(){
 
         int status = NULL;
         cmd = sh_readline();
+        
+        argv = split(cmd, " ");
         /*TODO catch signal 130 here (ctrl+ c) and pass to status*/
+        if (strcmp(argv[0], "exit") == 0){
+                free(cmd);
+                exit(0);    
+         }
         int fork_rc = fork();
 
         if(fork_rc < 0){
@@ -25,15 +31,22 @@ int main(){
 		}
         if (fork_rc == 0){
             printf("Forked to parse\n");
-            argv = split(cmd, " ");
             int argc = get_size(argv);
-            if (strcmp(argv[0], "exit") == 0)
-                break;
+            
+                
 
 
             int cmd_type = what_command(argc, argv);
             if (cmd_type == REGULAR){
                 status = normal_execute(argc, argv); /*status depends on if this command ran okay*/
+            } else if (cmd_type == OUTPUT_REDIRECT){
+                pass;
+            }else if (cmd_type == INPUT_REDIRECT){
+                pass;
+            }else if (cmd_type == PIPE){
+                pass;
+            }else if (cmd_type == BACKGROUND){
+                pass;
             }
             
         }
@@ -54,7 +67,4 @@ int main(){
 
 
     }
-    free(cmd);
-    free(argv);
-
 }
