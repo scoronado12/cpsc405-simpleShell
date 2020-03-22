@@ -9,9 +9,10 @@
 
 int main(){
     
-    char **argv;
-    char *cmd;
     while (1){
+        char **argv;
+        char *cmd;
+
         char *dir = pwd();
         printf("[%s@nenbarsh %s]$ ", getenv("USER"), dir);
 
@@ -28,25 +29,38 @@ int main(){
 
         if(fork_rc < 0){
             printf("Fork Failed!\n");
+            exit(-1);
 		}
         if (fork_rc == 0){
-            printf("Forked to parse\n");
+            //printf("Forked to parse\n");
             int argc = get_size(argv);
             
                 
 
 
-            int cmd_type = what_command(argc, argv);
+            int cmd_type = -1;
+            cmd_type = what_command(argc, argv);
             if (cmd_type == REGULAR){
                 status = normal_execute(argc, argv); /*status depends on if this command ran okay*/
             } else if (cmd_type == OUTPUT_REDIRECT){
-                pass;
+                free(argv);
+                free(cmd);
+                char **left_side;
+                char **right_side;
+                int delimIndx = getIndxOf(">", argc, argv);
+                
+                printf("Index of > is: %d\n", delimIndx);
+
+                
+                
             }else if (cmd_type == INPUT_REDIRECT){
                 pass;
             }else if (cmd_type == PIPE){
                 pass;
             }else if (cmd_type == BACKGROUND){
                 pass;
+            }else if (cmd_type == -1){
+                printf("Something went wrong\ncmd_type: %d\n", cmd_type);
             }
             
         }
@@ -59,12 +73,7 @@ int main(){
             printf("x ");
         }
 
-
-        
-
         free(cmd);
         free(argv);
-
-
     }
 }

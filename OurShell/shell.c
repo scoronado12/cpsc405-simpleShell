@@ -11,7 +11,7 @@
 char *pwd(){
 	char buff[100];
 	getcwd(buff, sizeof(buff));
-	char *dir = malloc(sizeof(buff));
+	char *dir = malloc(sizeof(buff) + 1);
 	strcpy(dir, buff);
 	return dir;
 
@@ -72,14 +72,12 @@ int get_size(char **line){
 /*Parses Through the array and decides what to do with it*/
 
 int normal_execute(int argc, char **line){
-	printf("argc: %d\n",argc);
 	line[argc] = NULL;
 
 	/**leave if parsed command is blank**/
 	if (strcmp(line[0],"") == 0)	
 		return 0;
 	
-        printf("Regular command\n");
 
         int rc = fork();
 
@@ -90,9 +88,8 @@ int normal_execute(int argc, char **line){
 
         int fp = 0;
         if (rc == 0){
-            printf("forked\n");
+            //printf("forked\n");
             /*safe to exec within child*/
-            printf("execute %s\n", line[0]);
             fp = execvp(line[0],line);
             if (fp == -1){
                 fprintf(stderr, "nenbarsh: %s \n", strerror(errno));
@@ -104,7 +101,6 @@ int normal_execute(int argc, char **line){
 
 		}
 
-	
 
 	return 0;
 
@@ -145,4 +141,17 @@ int what_command(int argc, char **argv){
     }
 
     return status;
+}
+
+/**Returns the index of the delimiter that is to be found in the array*/
+
+int getIndxOf(char *delim, int argc, char **argv){
+
+    for (int i = 0; i < get_size(argv); i++){
+        if (strcmp(delim, argv[i])== 0)
+            return i;
+    }
+
+   return -1; 
+
 }
