@@ -71,59 +71,78 @@ int get_size(char **line){
 
 /*Parses Through the array and decides what to do with it*/
 
-int parseNrun(int argc, char **line){
+int normal_execute(int argc, char **line){
 	printf("argc: %d\n",argc);
 	line[argc] = NULL;
 
-	/**reset if parsed command is blank**/
+	/**leave if parsed command is blank**/
 	if (strcmp(line[0],"") == 0)	
 		return 0;
 	
+        printf("Regular command\n");
 
-	/*parse through words of the split string don't run loop if simply pressed enter*/
-	for (int i = 0; i < argc; i++){
-		//printf("Checking %s\n", line[i]);
+        int rc = fork();
 
+        if(rc < 0){
+            printf("Fork Failed!\n");
+            return 2;
+        }
 
-		if (strcmp(line[i], ">") == 0){
-			printf("Output redirection\n");
-		} else if (strcmp(line[i],"<") == 0){
-			printf("Input redirection\n");
-		} else if (strcmp(line[i], "|") == 0){
-			printf("pipe!\n");
-		}else if (strcmp(line[i], "&") == 0){
-			printf("Background\n");
-		}else{
-			printf("Regular command\n");
-
-			int rc = fork();
-
-			if(rc < 0){
-				printf("Fork Failed!\n");
-				return 2;
-			}
-			int fp = 0;
-			if (rc == 0){
-				printf("forked\n");
-				/*safe to exec within child*/
-				printf("execute %s\n", line[0]);
-				fp = execvp(line[0],line);
-				if (fp == -1){
-					fprintf(stderr, "Error executing program - %s\n", strerror(errno));
-					return 2;
-				}
-				
-			}
-
-
+        int fp = 0;
+        if (rc == 0){
+            printf("forked\n");
+            /*safe to exec within child*/
+            printf("execute %s\n", line[0]);
+            fp = execvp(line[0],line);
+            if (fp == -1){
+                fprintf(stderr, "nenbarsh: %s \n", strerror(errno));
+                return 2;
+            }
+            
 
 			wait(NULL);
-			break;
 
 		}
 
-	}
+	
 
 	return 0;
 
+}
+
+/* *
+ * what_command() return statuses correspond with what should be done
+ *
+ * 0 - for regular command
+ * 1 - redirect output
+ * 2 - redirect input
+ * 3 - pipe
+ * 4 - run in background */
+int what_command(int argc, char **argv){
+    int status = 0; /*Assume regular command*/
+
+    for (int i = 0; i < argc; i++){
+        if (strcmp(argv[i], ">") == 0){
+			printf("Output redirection\n");
+            status = 1;
+            break;
+		} else if (strcmp(argv[i],"<") == 0){
+            status = 2;
+			printf("Input redirection\n");
+            break;
+		} else if (strcmp(argv[i], "|") == 0){
+            status = 3;
+			printf("pipe!\n");
+            break;
+		}else if (strcmp(argv[i], "&") == 0){
+            /* https://stackoverflow.com/questions/8319484/regarding-background-processes-using-fork-and-child-processes-in-my-dummy-shel
+             */
+            status = 4;
+			printf("Background\n");
+            break;
+		}
+
+    }
+
+    return status;
 }

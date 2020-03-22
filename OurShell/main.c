@@ -25,7 +25,8 @@ int main(){
             printf("Forked to parse\n");
             argv = split(cmd, " ");
             int argc = get_size(argv);
-            status = parseNrun(argc, argv);
+            what_command(argc, argv);
+            status = normal_execute(argc, argv); /*status depends on if this command ran okay*/
 
             
         }
