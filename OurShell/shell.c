@@ -34,7 +34,7 @@ char *sh_readline(){
 char** split(char *str, char *tok){
 	int num_toks = 1;
 	for (int i = 0 ; str[i] != NULL ; i++){
-		if (str[i] == ' '){ //TODO fix me not char
+		if (strcmp(&str[i] ,tok)== 0){ //TODO fix me not char
 			num_toks++;
 		}	
 	}
@@ -83,32 +83,14 @@ int normal_execute(int argc, char **line){
 	/**leave if parsed command is blank**/
 	if (strcmp(line[0],"") == 0)	
 		return 0;
-	
+        
 
-        int rc = fork();
-
-        if(rc < 0){
-            printf("Fork Failed!\n");
-            return 2;
-        }
-
-        int fp = 0;
-        if (rc == 0){
-            //printf("forked\n");
-            /*safe to exec within child*/
-            fp = execvp(line[0],line);
-            if (fp == -1){
-                fprintf(stderr, "nenbarsh: %s \n", strerror(errno));
-                return 2;
-            }
-            
-
-			wait(NULL);
-
-		}
-
-
-	return 0;
+    int fp = execvp(line[0],line);
+    if (fp == -1){
+        fprintf(stderr, "nenbarsh: %s \n", strerror(errno));
+        return -1;
+    }    
+    return 0;
 
 }
 

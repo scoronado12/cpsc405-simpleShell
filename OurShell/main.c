@@ -22,13 +22,16 @@ int main(){
         cmd[strcspn(cmd, "\n")] = '\0'; 
         //cmd = sh_readline();
         printf("Readline %s done, splitting\n", cmd);
+        char cmd_cpy[255];
+        strcpy(cmd_cpy,cmd);
         argv = split(cmd, " ");
-        printf("Debug loop\n");
-        int indx =0;
+        //printf("Debug loop\n");
+        //int indx = 0;
+        /*  
         while (argv[indx] != NULL){
             printf("argv[%d] = %s\n", indx, argv[indx]);
             indx++;
-        }
+        }*/
 
 
 
@@ -53,19 +56,39 @@ int main(){
 
             int cmd_type = -1;
             cmd_type = what_command(argc, argv);
+            printf("CMD %s\n", cmd_cpy);
+            printf("cmd_type: %d\n", cmd_type);
             if ((cmd_type == REGULAR) && (strcmp(cmd, "exit") != 0)){
                 //status = normal_execute(argc, argv); /*status depends on if this command ran okay*/
                 execvp(argv[0],argv); //fpintf
                 printf("Bad Command: %s\n", argv[0]);
                 //free(cmd);
             } else if (cmd_type == OUTPUT_REDIRECT){
-                char **left_side;
-                char **right_side;
-                /* *TODO Findo out why this array of chars are not getting passed correctly */
-                int delimIndx = getIndxOf(">", argc, argv);
+                /*could be reused*/
+               /* *TODO Findo out why this array of chars are not getting passed correctly */
+                //int delimIndx = getIndxOf(">", argc, argv);
+                char **delim_split = split(cmd_cpy, ">");
                 
-                printf("Index of > is: %d\n", delimIndx);
-                free(cmd);
+                for (int i = 0; i < get_size(delim_split); i++)
+                    printf("DELIM_SPLIT: %s", delim_split[i]);
+
+                free(delim_split);
+
+                /* 
+
+                char left_side[128];
+                char right_side[128];
+
+                strcpy(left_side, delim_split[0]);
+                strcpy(right_side, delim_split[1]);
+                
+
+                printf("To the left %s \n", left_side);
+                printf("To the right %s \n", right_side);
+
+                //printf("Index of > is: %d\n", delimIndx);
+
+               */ 
                 
                 
             }else if (cmd_type == INPUT_REDIRECT){
