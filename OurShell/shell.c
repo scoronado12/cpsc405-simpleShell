@@ -17,13 +17,14 @@ char *pwd(){
 
 }
 /*This is used to read a string without assigning a buffer size*/
+char line[256];
 
 char *sh_readline(){
-    char *line = NULL;
     size_t buffer_sz = 0;	
-    getline(&line, &buffer_sz, stdin);
-	char *pos = strchrnul(line, '\n');
-	pos = '\0';
+    getline(line, &buffer_sz, stdin);
+    line[strlen(line) - 1] = '\0';
+	//char *pos = strchrnul(line, '\n');
+	//pos = '\0';
 
     return line;
 }
@@ -31,30 +32,35 @@ char *sh_readline(){
 /*This Splits the string and returns it as an array*/
 
 char** split(char *str, char *tok){
-	int num_toks = 0;
-	for (int i = 0 ; str[i] != '\n' ; i++){
-		if (str[i] == tok){
+	int num_toks = 1;
+	for (int i = 0 ; str[i] != NULL ; i++){
+		if (str[i] == ' '){ //TODO fix me not char
 			num_toks++;
 		}	
 	}
-	char **str_array = malloc(num_toks * sizeof(char));
+	char **str_array = malloc((num_toks + 1) * sizeof(char*));
 	str_array[num_toks + 1] = NULL;
 	char *token = strtok(str, tok);
 	int i = 0;
+
 	while(token != NULL){
+        printf("TOKS %s\n", token);
 		str_array[i] = token;
 		//*str_array[i] = token;
+        
 		token = strtok(NULL, tok);
 	        i++;	
 	}
-	/*clean each string of newlines*/
+/*clean each string of newlines*/
+       /*   
 	for (int i = 0; i < get_size(str_array); i++){//each string in array
 		for (int j = 0; j < strlen(str_array[i]); j++){ //each char in string
-			if (str_array[i][j] == '\n')
+			if (str_array[i][j] == '\n'){
 				str_array[i][j] = '\0';
-		}
-	}
-
+            }
+        }
+	}*/
+    printf("Returning\n");
 	return str_array;
 
 }

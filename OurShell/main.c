@@ -7,17 +7,32 @@
 
 #define pass (void)0
 
+
+char cmd[255];
+
+
 int main(){
-    char *cmd = "";
-    while (strcmp(cmd, "exit") != 0){
+        while (strcmp(cmd, "exit") != 0){
         char **argv;
         char *dir = pwd();
         printf("[%s@nenbarsh %s]$ ", getenv("USER"), dir);
 
         int status = NULL;
-        cmd = sh_readline();
-        
+        fgets(cmd, 100, stdin);
+        cmd[strcspn(cmd, "\n")] = '\0'; 
+        //cmd = sh_readline();
+        printf("Readline %s done, splitting\n", cmd);
         argv = split(cmd, " ");
+        printf("Debug loop\n");
+        int indx =0;
+        while (argv[indx] != NULL){
+            printf("argv[%d] = %s\n", indx, argv[indx]);
+            indx++;
+        }
+
+
+
+
         /*TODO catch signal 130 here (ctrl+ c) and pass to status*/
         /*  if (strcmp(argv[0], "exit") == 0){
                 free(cmd);
@@ -39,7 +54,10 @@ int main(){
             int cmd_type = -1;
             cmd_type = what_command(argc, argv);
             if ((cmd_type == REGULAR) && (strcmp(cmd, "exit") != 0)){
-                status = normal_execute(argc, argv); /*status depends on if this command ran okay*/
+                //status = normal_execute(argc, argv); /*status depends on if this command ran okay*/
+                execvp(argv[0],argv); //fpintf
+                printf("Bad Command: %s\n", argv[0]);
+                //free(cmd);
             } else if (cmd_type == OUTPUT_REDIRECT){
                 char **left_side;
                 char **right_side;
@@ -71,6 +89,6 @@ int main(){
         }
         free(argv);
     }
-    free(cmd);
+    //free(cmd);
     return 0;
 }
