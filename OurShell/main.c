@@ -70,11 +70,11 @@ int main(){
                 char **delim_split = split(cmd_cpy, ">");
                 
                 for (int i = 0; i < get_size(delim_split); i++)
-                    printf("DELIM_SPLIT: %s", delim_split[i]);
+                    printf("DELIM_SPLIT: %s\n", delim_split[i]);
 
-                free(delim_split);
+                //free(delim_split);
 
-                /* 
+                
 
                 char left_side[128];
                 char right_side[128];
@@ -88,7 +88,7 @@ int main(){
 
                 //printf("Index of > is: %d\n", delimIndx);
 
-               */ 
+               
                 
                 
             }else if (cmd_type == INPUT_REDIRECT){
