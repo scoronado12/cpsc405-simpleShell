@@ -115,25 +115,25 @@ int normal_execute(int argc, char **line){
  * 3 - pipe
  * 4 - run in background */
 int what_command(int argc, char **argv){
-    int status = 0; /*Assume regular command*/
+    int status = REGULAR; /*Assume regular command*/
 
     for (int i = 0; i < argc; i++){
         if (strcmp(argv[i], ">") == 0){
 			printf("Output redirection\n");
-            status = 1;
+            status = OUTPUT_REDIRECT;
             break;
 		} else if (strcmp(argv[i],"<") == 0){
-            status = 2;
+            status = INPUT_REDIRECT;
 			printf("Input redirection\n");
             break;
 		} else if (strcmp(argv[i], "|") == 0){
-            status = 3;
+            status = PIPE;
 			printf("pipe!\n");
             break;
 		}else if (strcmp(argv[i], "&") == 0){
             /* https://stackoverflow.com/questions/8319484/regarding-background-processes-using-fork-and-child-processes-in-my-dummy-shel
              */
-            status = 4;
+            status = BACKGROUND;
 			printf("Background\n");
             break;
 		}
@@ -146,10 +146,13 @@ int what_command(int argc, char **argv){
 /**Returns the index of the delimiter that is to be found in the array*/
 
 int getIndxOf(char *delim, int argc, char **argv){
-
+    
     for (int i = 0; i < get_size(argv); i++){
-        if (strcmp(delim, argv[i])== 0)
+        printf("Checking %s against %s\n", argv[i], delim);
+        if (strcmp(delim, argv[i]) == 0){
             return i;
+        }
+
     }
 
    return -1; 

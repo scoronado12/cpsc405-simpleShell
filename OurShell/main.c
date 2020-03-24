@@ -8,11 +8,9 @@
 #define pass (void)0
 
 int main(){
-    
-    while (1){
+    char *cmd = "";
+    while (strcmp(cmd, "exit") != 0){
         char **argv;
-        char *cmd;
-
         char *dir = pwd();
         printf("[%s@nenbarsh %s]$ ", getenv("USER"), dir);
 
@@ -21,10 +19,10 @@ int main(){
         
         argv = split(cmd, " ");
         /*TODO catch signal 130 here (ctrl+ c) and pass to status*/
-        if (strcmp(argv[0], "exit") == 0){
+        /*  if (strcmp(argv[0], "exit") == 0){
                 free(cmd);
                 exit(0);    
-         }
+         } */
         int fork_rc = fork();
 
         if(fork_rc < 0){
@@ -40,17 +38,16 @@ int main(){
 
             int cmd_type = -1;
             cmd_type = what_command(argc, argv);
-            if (cmd_type == REGULAR){
+            if ((cmd_type == REGULAR) && (strcmp(cmd, "exit") != 0)){
                 status = normal_execute(argc, argv); /*status depends on if this command ran okay*/
             } else if (cmd_type == OUTPUT_REDIRECT){
-                free(argv);
-                free(cmd);
                 char **left_side;
                 char **right_side;
+                /* *TODO Findo out why this array of chars are not getting passed correctly */
                 int delimIndx = getIndxOf(">", argc, argv);
                 
                 printf("Index of > is: %d\n", delimIndx);
-
+                free(cmd);
                 
                 
             }else if (cmd_type == INPUT_REDIRECT){
@@ -67,13 +64,13 @@ int main(){
 
         wait(NULL);
 
-        if (status == 0){
+        if ((status == 0) && (strcmp(cmd,"exit") != 0)){
             printf("✓ ");
-        } else{
+        } else if ((status != 0) && (strcmp(cmd,"exit") != 0)){
             printf("x ");
         }
-
-        free(cmd);
         free(argv);
     }
+    free(cmd);
+    return 0;
 }
