@@ -45,11 +45,12 @@ char** split(char *str, char *tok){
 
 	while(token != NULL){
         printf("TOKS %s\n", token);
-		str_array[i] = token;
-		//*str_array[i] = token;
+        str_array[i] = malloc(strlen(token)+1);
+	    strcpy(str_array[i],token);
+        //str_array[i] = token;
         
 		token = strtok(NULL, tok);
-	        i++;	
+	    i++;	
 	}
 /*clean each string of newlines*/
        /*   

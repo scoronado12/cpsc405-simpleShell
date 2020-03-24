@@ -67,7 +67,8 @@ int main(){
                 /*could be reused*/
                /* *TODO Findo out why this array of chars are not getting passed correctly */
                 //int delimIndx = getIndxOf(">", argc, argv);
-                char **delim_split = split(cmd_cpy, ">");
+                char **delim_split;
+                delim_split = split(cmd_cpy, ">");
                 
                 for (int i = 0; i < get_size(delim_split); i++)
                     printf("DELIM_SPLIT: %s\n", delim_split[i]);
@@ -80,6 +81,7 @@ int main(){
                 char right_side[128];
 
                 strcpy(left_side, delim_split[0]);
+                /* TODO right_side[0] has a space ' '  */
                 strcpy(right_side, delim_split[1]);
                 
 
@@ -89,7 +91,7 @@ int main(){
                 //printf("Index of > is: %d\n", delimIndx);
 
                
-                
+                free(delim_split); 
                 
             }else if (cmd_type == INPUT_REDIRECT){
                 pass;
