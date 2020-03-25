@@ -50,45 +50,41 @@ int main(){
         if (fork_rc == 0){
             //printf("Forked to parse\n");
             int argc = get_size(argv);
-            
-                
-
-
             int cmd_type = -1;
             cmd_type = what_command(argc, argv);
             printf("CMD %s\n", cmd_cpy);
             printf("cmd_type: %d\n", cmd_type);
             if ((cmd_type == REGULAR) && (strcmp(cmd, "exit") != 0)){
-                //status = normal_execute(argc, argv); /*status depends on if this command ran okay*/
-                execvp(argv[0],argv); //fpintf
-                printf("Bad Command: %s\n", argv[0]);
-                //free(cmd);
+
+                status = normal_execute(argc, argv); /*status depends on if this command ran okay*/
+                               //free(cmd);
             } else if (cmd_type == OUTPUT_REDIRECT){
                 /*could be reused*/
                /* *TODO Findo out why this array of chars are not getting passed correctly */
                 //int delimIndx = getIndxOf(">", argc, argv);
-                char **delim_split;
-                delim_split = split(cmd_cpy, ">");
-                
+                char **delim_split = split(cmd_cpy, " > ");
+
+                printf("cmd_cpy %s\n", cmd_cpy);
+               /*   
                 for (int i = 0; i < get_size(delim_split); i++)
                     printf("DELIM_SPLIT: %s\n", delim_split[i]);
-
+                */
                 //free(delim_split);
 
-                
-
-                char left_side[128];
-                char right_side[128];
+                char left_side[sizeof(delim_split[0])+1];
+                char right_side[sizeof(delim_split[2]) + 1];
 
                 strcpy(left_side, delim_split[0]);
                 /* TODO right_side[0] has a space ' '  */
-                strcpy(right_side, delim_split[1]);
+                strcpy(right_side, delim_split[2]);
                 
 
                 printf("To the left %s \n", left_side);
+
+
+
                 printf("To the right %s \n", right_side);
 
-                //printf("Index of > is: %d\n", delimIndx);
 
                
                 free(delim_split); 

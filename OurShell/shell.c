@@ -44,24 +44,14 @@ char** split(char *str, char *tok){
 	int i = 0;
 
 	while(token != NULL){
-        printf("TOKS %s\n", token);
+        //printf("TOKS %s\n", token);
         str_array[i] = malloc(strlen(token)+1);
-	    strcpy(str_array[i],token);
+	    strcpy(str_array[i], token);
         //str_array[i] = token;
         
 		token = strtok(NULL, tok);
 	    i++;	
 	}
-/*clean each string of newlines*/
-       /*   
-	for (int i = 0; i < get_size(str_array); i++){//each string in array
-		for (int j = 0; j < strlen(str_array[i]); j++){ //each char in string
-			if (str_array[i][j] == '\n'){
-				str_array[i][j] = '\0';
-            }
-        }
-	}*/
-    printf("Returning\n");
 	return str_array;
 
 }
@@ -146,4 +136,9 @@ int getIndxOf(char *delim, int argc, char **argv){
 
    return -1; 
 
+}
+
+void test_array(char **argv){
+    for (int i = 0; argv[i] != NULL; i++)
+        printf("%s\n",argv[i]);
 }
