@@ -142,6 +142,7 @@ int getIndxOf(char *delim, int argc, char **argv){
 
 
 int output_redir(char *line){
+    printf("Output currently not finished\n");
     int status = -1; //assume it never ran
     int mode = 0;
     int stdout_copy;
@@ -161,7 +162,7 @@ int output_redir(char *line){
         fprintf(stderr, "Open %s failed -  %s\n", line_split[get_size(line_split)-1], strerror(errno));
         return status;
     }
-    //ecexvp()
+   // ecexvp()
     
     /*  
     for (int i = 0; i < get_size(line_split); i++)
