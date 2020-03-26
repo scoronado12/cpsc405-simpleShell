@@ -11,7 +11,7 @@
 char cmd[255];
 
 
-int main(){
+int main() {
         while (strcmp(cmd, "exit") != 0){
         char **argv;
         char *dir = pwd();
@@ -60,34 +60,9 @@ int main(){
                                //free(cmd);
             } else if (cmd_type == OUTPUT_REDIRECT){
                 /*could be reused*/
-               /* *TODO Findo out why this array of chars are not getting passed correctly */
                 //int delimIndx = getIndxOf(">", argc, argv);
-                char **delim_split = split(cmd_cpy, " > ");
-
-                printf("cmd_cpy %s\n", cmd_cpy);
-               /*   
-                for (int i = 0; i < get_size(delim_split); i++)
-                    printf("DELIM_SPLIT: %s\n", delim_split[i]);
-                */
-                //free(delim_split);
-
-                char left_side[sizeof(delim_split[0])+1];
-                char right_side[sizeof(delim_split[2]) + 1];
-
-                strcpy(left_side, delim_split[0]);
-                /* TODO right_side[0] has a space ' '  */
-                strcpy(right_side, delim_split[2]);
-                
-
-                printf("To the left %s \n", left_side);
-
-
-
-                printf("To the right %s \n", right_side);
-
-
-               
-                free(delim_split); 
+               status = output_redir(cmd_cpy);
+                              
                 
             }else if (cmd_type == INPUT_REDIRECT){
                 pass;

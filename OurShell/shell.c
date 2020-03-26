@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include "shell.h"
 
 #define PIPE_BUFF 255
@@ -138,7 +140,34 @@ int getIndxOf(char *delim, int argc, char **argv){
 
 }
 
-void test_array(char **argv){
-    for (int i = 0; argv[i] != NULL; i++)
-        printf("%s\n",argv[i]);
+
+int output_redir(char *line){
+    int status = -1; //assume it never ran
+    int mode = 0;
+    int stdout_copy;
+    char **line_split = split(line, " > "); /* The last index would be the recieving file */
+    int dup_status = dup2(stdout_copy, 1);
+
+    if (dup_status == -1){
+        printf("dup of stdout failed!\n");
+        return status;        
+    }
+
+
+    close(1);
+    mode = O_WRONLY|O_CREAT; 
+    char *file_name = line_split[get_size(line_split)-1]; 
+    if (open(file_name, mode , S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH) < 0){
+        fprintf(stderr, "Open %s failed -  %s\n", line_split[get_size(line_split)-1], strerror(errno));
+        return status;
+    }
+    //ecexvp()
+    
+    /*  
+    for (int i = 0; i < get_size(line_split); i++)
+        printf(":%s:\n", line_split[i]);
+   */
+
+   return status; 
+
 }

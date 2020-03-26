@@ -6,4 +6,4 @@ int get_size(char **line);
 int normal_execute(int argc, char **line);
 int what_command(int argc, char **argv);
 int getIndxOf(char *delim, int argc, char **argv);
-void test_array(char **argv);
+int output_redir(char *line); 
