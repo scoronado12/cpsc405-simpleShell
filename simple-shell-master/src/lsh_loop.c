@@ -97,8 +97,7 @@ void lsh_loop(void)
             free(new_args);
             free(args);
         }
-        while (wait(NULL) > 0)
-            ;
+        while (wait(NULL) > 0);
 
         free(line);
         line = NULL;

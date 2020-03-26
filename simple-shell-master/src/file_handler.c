@@ -38,6 +38,7 @@ int file_handler(char **args, char *operator, int i)
 char **fileIO(char *args[])
 {
     int i = 0, position = 0, bufsize = LSH_CMD_BUFSIZE;
+    int flag_ls;
     int flag_out, flag_in, flag_app;
     char **new_args = NULL, **ptr_tmp;
     MALLOC(new_args, LSH_CMD_BUFSIZE, char *);
@@ -46,8 +47,11 @@ char **fileIO(char *args[])
         flag_app = file_handler(args, ">>", i);
         flag_out = file_handler(args, ">", i);
         flag_in = file_handler(args, "<", i);
+        /* *This here is an attempt to detect cd */
+
+        flag_ls = file_handler(args, "ls", i);
         //fprintf(stderr, "%s, %d, %d, %d\n", args[i], flag_app, flag_out, flag_in);
-        
+        printf("cd detected if flag_ls is 1 - %d\n", flag_ls);
         if ((flag_app > 0) || (flag_out > 0) || (flag_in > 0))
         {
             //right = i;
