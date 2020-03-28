@@ -142,33 +142,22 @@ int getIndxOf(char *delim, int argc, char **argv){
 
 
 int output_redir(char *line){
-    printf("Output currently not finished\n");
+    printf("Output redirection currently not finished\n\n");
     int status = -1; //assume it never ran
     int mode = 0;
-    int stdout_copy;
-    char **line_split = split(line, " > "); /* The last index would be the recieving file */
-    int dup_status = dup2(stdout_copy, 1);
-
-    if (dup_status == -1){
-        printf("dup of stdout failed!\n");
-        return status;        
-    }
-
-
-    close(1);
-    mode = O_WRONLY|O_CREAT; 
-    char *file_name = line_split[get_size(line_split)-1]; 
-    if (open(file_name, mode , S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH) < 0){
-        fprintf(stderr, "Open %s failed -  %s\n", line_split[get_size(line_split)-1], strerror(errno));
-        return status;
-    }
-   // ecexvp()
+    char **line_split = split(line, ">"); /* The last index would be the recieving file */
+    char cmd_to_run[250];
+    char file_name[255];
+     
+    strncpy(cmd_to_run, line_split[0],strlen(line_split[0]) -1);
     
-    /*  
-    for (int i = 0; i < get_size(line_split); i++)
-        printf(":%s:\n", line_split[i]);
-   */
+    printf("Copied str: :%s:\n", cmd_to_run);
+    strncat(cmd_to_run, line_split[1],strlen(line_split[1]));
+    printf("Unified string: %s\n",cmd_to_run);
+    /* TODO split cmd string and dumpoutput into file_name */
 
-   return status; 
+    
+
+    return status; 
 
 }
