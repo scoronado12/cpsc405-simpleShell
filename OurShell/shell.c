@@ -142,33 +142,43 @@ int getIndxOf(char *delim, int argc, char **argv){
 
 
 int output_redir(char *line){
-    printf("Output currently not finished\n");
+    printf("Output redirection currently not finished\n\n");
     int status = -1; //assume it never ran
     int mode = 0;
-    int stdout_copy;
-    char **line_split = split(line, " > "); /* The last index would be the recieving file */
-    int dup_status = dup2(stdout_copy, 1);
-
-    if (dup_status == -1){
-        printf("dup of stdout failed!\n");
-        return status;        
+    char **line_split = split(line, ">"); /* The last index would be the recieving file */
+    char cmd_to_run[250];
+    char file_name[255];
+     
+    strncpy(cmd_to_run, line_split[0],strlen(line_split[0]) -1);
+    
+    printf("Copied command: :%s:\n", cmd_to_run);
+    /* TODO split cmd string and dumpoutput into file_name */
+    int str_size = 0;
+    strcpy(file_name, line_split[get_size(line_split)-1]);
+    
+    for (int i = 0; file_name[i] != NULL; i++){
+        if (file_name[i] != ' ')
+            file_name[str_size++] = file_name[i];
     }
 
+    file_name[str_size] = '\0';
 
+
+    free(line_split);
+
+    char **cmd_split = split(cmd_to_run, " ");
     close(1);
-    mode = O_WRONLY|O_CREAT; 
-    char *file_name = line_split[get_size(line_split)-1]; 
-    if (open(file_name, mode , S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH) < 0){
-        fprintf(stderr, "Open %s failed -  %s\n", line_split[get_size(line_split)-1], strerror(errno));
+    mode = O_WRONLY| O_CREAT;
+
+    if (open(file_name, mode, S_IRUSR| S_IWUSR| S_IRGRP | S_IROTH) < 0){
+        fprintf(stderr, "Opening of %s failed!\n" ,file_name);
+        free(cmd_split);
         return status;
     }
-   // ecexvp()
     
-    /*  
-    for (int i = 0; i < get_size(line_split); i++)
-        printf(":%s:\n", line_split[i]);
-   */
 
-   return status; 
+    status = execvp(cmd_split[0], cmd_split);
+    free(cmd_split);
+    return status; 
 
 }
