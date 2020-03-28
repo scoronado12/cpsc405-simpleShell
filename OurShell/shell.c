@@ -151,12 +151,24 @@ int output_redir(char *line){
      
     strncpy(cmd_to_run, line_split[0],strlen(line_split[0]) -1);
     
-    printf("Copied str: :%s:\n", cmd_to_run);
-    strncat(cmd_to_run, line_split[1],strlen(line_split[1]));
-    printf("Unified string: %s\n",cmd_to_run);
+    printf("Copied command: :%s:\n", cmd_to_run);
     /* TODO split cmd string and dumpoutput into file_name */
+    strcpy(file_name, line_split[get_size(line_split)-1]);
+    printf("file_name: %s\n", file_name);    
 
+    free(line_split);
+
+    char **cmd_split = split(cmd_to_run, " ");
+    close(1);
+    mode = O_WRONLY| O_CREAT;
+
+    if (open(file_name, mode, S_IRUSR| S_IWUSR| S_IRGRP | S_IROTH) < 0){
+        fprintf(stderr, "Opening of %s failed!\n" ,file_name);
+        return status;
+    }
     
+
+    execvp(cmd_split[0], cmd_split);
 
     return status; 
 
