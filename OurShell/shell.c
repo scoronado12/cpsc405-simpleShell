@@ -153,8 +153,16 @@ int output_redir(char *line){
     
     printf("Copied command: :%s:\n", cmd_to_run);
     /* TODO split cmd string and dumpoutput into file_name */
+    int str_size = 0;
     strcpy(file_name, line_split[get_size(line_split)-1]);
-    printf("file_name: %s\n", file_name);    
+    
+    for (int i = 0; file_name[i] != NULL; i++){
+        if (file_name[i] != ' ')
+            file_name[str_size++] = file_name[i];
+    }
+
+    file_name[str_size] = '\0';
+
 
     free(line_split);
 
@@ -164,12 +172,13 @@ int output_redir(char *line){
 
     if (open(file_name, mode, S_IRUSR| S_IWUSR| S_IRGRP | S_IROTH) < 0){
         fprintf(stderr, "Opening of %s failed!\n" ,file_name);
+        free(cmd_split);
         return status;
     }
     
 
-    execvp(cmd_split[0], cmd_split);
-
+    status = execvp(cmd_split[0], cmd_split);
+    free(cmd_split);
     return status; 
 
 }
