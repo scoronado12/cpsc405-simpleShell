@@ -25,9 +25,11 @@ int main() {
         char cmd_cpy[255];
         strcpy(cmd_cpy, cmd);
         argv = split(cmd, " ");
+        int argc = get_size(argv);
+
         //printf("Debug loop\n");
-        //int indx = 0;
-        /*  
+        int indx = 0;
+         /* 
         while (argv[indx] != NULL){
             printf("argv[%d] = %s\n", indx, argv[indx]);
             indx++;
@@ -49,7 +51,6 @@ int main() {
 		}
         if (fork_rc == 0){
             //printf("Forked to parse\n");
-            int argc = get_size(argv);
             int cmd_type = -1;
             cmd_type = what_command(argc, argv);
             printf("CMD %s\n", cmd_cpy);
@@ -68,7 +69,7 @@ int main() {
                               
                 
             }else if (cmd_type == INPUT_REDIRECT){
-                pass;
+               status = input_redir(cmd_cpy);
             }else if (cmd_type == PIPE){
                 pass;
             }else if (cmd_type == BACKGROUND){

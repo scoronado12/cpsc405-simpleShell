@@ -85,7 +85,6 @@ int normal_execute(int argc, char **line){
       if (built_in_status == -1)
          return -1;
      return built_in_status; 
-
     }
 
     int fp = execvp(line[0],line);
@@ -204,9 +203,48 @@ int output_redir(char *line){
  * Input Redirection */
 
 int input_redir(char *line){
+    int status = -1; //assume it never ran
     int mode = 0;
+    char **line_split = split(line, ">"); /* The last index would be the recieving file */
+    char cmd_to_run[250];
+    char file_name[255];
+     
+    
+    int str_size = 0;
+    strcpy(file_name, line_split[get_size(line_split)-1]);
+    
+    for (int i = 0; file_name[i] != NULL; i++){
+        if (file_name[i] != ' ')
+            file_name[str_size++] = file_name[i];
+    }
+
+    file_name[str_size] = '\0';
+
+
+    free(line_split);
+
+    char **cmd_split = split(cmd_to_run, " ");
     close(0);
     mode = O_RDONLY;
+
+    if (open(file_name, mode, S_IRUSR| S_IWUSR| S_IRGRP | S_IROTH) < 0){
+        fprintf(stderr, "Opening of %s failed!\n" ,file_name);
+        free(cmd_split);
+        return status;
+    }
+    
+
+    int exec = execvp(cmd_split[0], cmd_split);
+    if (exec == -1){
+        status = -1;
+    } else {
+        status = 0;
+    }
+
+    free(cmd_split);
+    return status; 
+
+
 
 
 
