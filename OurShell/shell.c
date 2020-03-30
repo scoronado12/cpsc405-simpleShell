@@ -244,8 +244,4 @@ int input_redir(char *line){
     free(cmd_split);
     return status; 
 
-
-
-
-
 }
