@@ -140,9 +140,10 @@ int getIndxOf(char *delim, int argc, char **argv){
 
 }
 
+/* 
+ * Output Redirection */
 
 int output_redir(char *line){
-    printf("Output redirection currently not finished\n\n");
     int status = -1; //assume it never ran
     int mode = 0;
     char **line_split = split(line, ">"); /* The last index would be the recieving file */
@@ -151,7 +152,6 @@ int output_redir(char *line){
      
     strncpy(cmd_to_run, line_split[0],strlen(line_split[0]) -1);
     
-    printf("Copied command: :%s:\n", cmd_to_run);
     /* TODO split cmd string and dumpoutput into file_name */
     int str_size = 0;
     strcpy(file_name, line_split[get_size(line_split)-1]);
@@ -177,8 +177,26 @@ int output_redir(char *line){
     }
     
 
-    status = execvp(cmd_split[0], cmd_split);
+    int exec = execvp(cmd_split[0], cmd_split);
+    if (exec == -1){
+        status = -1;
+    } else {
+        status = 0;
+    }
+
     free(cmd_split);
     return status; 
+
+}
+
+/* 
+ * Input Redirection */
+
+int input_redir(char **line){
+    int mode = 0;
+    close(0);
+    mode = O_RDONLY;
+
+
 
 }

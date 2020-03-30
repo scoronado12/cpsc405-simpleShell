@@ -23,7 +23,7 @@ int main() {
         //cmd = sh_readline();
         printf("Readline %s done, splitting\n", cmd);
         char cmd_cpy[255];
-        strcpy(cmd_cpy,cmd);
+        strncpy(cmd_cpy,cmd, strlen(cmd));
         argv = split(cmd, " ");
         //printf("Debug loop\n");
         //int indx = 0;
