@@ -60,7 +60,7 @@ int main() {
 
              if (feof(stdin)){
                 printf("Ctrl + D\n");
-                close(stdout);
+                close(1);
                 exit(0); 
             }
      
@@ -80,17 +80,19 @@ int main() {
                 printf("CMD %s\n", cmd_cpy);
                 printf("cmd_type: %d\n", cmd_type);
 
-                if (strcmp(cmd_cpy, "dog") == 0){
-                    printf("  __      _\n");
-                    printf("o'')}____//\n");
-                    printf(" `_/      )\n");
-                    printf(" (_(_/-(_/\n");
-                    status = 0;
-                    
-                } else if (cmd_type == REGULAR){
-                    
+                if (cmd_type == REGULAR){
+                    if (strcmp(cmd_cpy, "dog") == 0){
+                        printf("  __      _\n");
+                        printf("o'')}____//\n");
+                        printf(" `_/      )\n");
+                        printf(" (_(_/-(_/\n");
+                        status = 0;
+                        fflush(0);
+                        _exit(0);
+                    } else {
+
                     status = normal_execute(argc, argv); /*status depends on if this command ran okay*/
-                                   //free(cmd);
+                    }
                 } else if (cmd_type == OUTPUT_REDIRECT){
                     /*could be reused*/
                     //int delimIndx = getIndxOf(">", argc, argv);
