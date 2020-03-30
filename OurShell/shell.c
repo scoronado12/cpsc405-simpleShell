@@ -72,17 +72,28 @@ int get_size(char **line){
 
 int normal_execute(int argc, char **line){
 	line[argc] = NULL;
-
+    int built_in_status = -1;
 	/**leave if parsed command is blank**/
-	if (strcmp(line[0],"") == 0)	
-		return 0;
-        
+	if (strcmp(line[0],"") == 0){
+		return 0; 
+    }
+
+
+
+    if (strcmp(line[0], "cd") == 0){
+      built_in_status = chdir(line[1]);
+      if (built_in_status == -1)
+         return -1;
+     return built_in_status; 
+
+    }
 
     int fp = execvp(line[0],line);
     if (fp == -1){
         fprintf(stderr, "nenbarsh: %s \n", strerror(errno));
         return -1;
-    }    
+    }
+    free(line);    
     return 0;
 
 }
@@ -192,7 +203,7 @@ int output_redir(char *line){
 /* 
  * Input Redirection */
 
-int input_redir(char **line){
+int input_redir(char *line){
     int mode = 0;
     close(0);
     mode = O_RDONLY;

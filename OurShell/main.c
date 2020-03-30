@@ -12,7 +12,7 @@ char cmd[255];
 
 
 int main() {
-        while (strcmp(cmd, "exit") != 0){
+        while (1){
         char **argv;
         char *dir = pwd();
         printf("[%s@nenbarsh %s]$ ", getenv("USER"), dir);
@@ -23,7 +23,7 @@ int main() {
         //cmd = sh_readline();
         printf("Readline %s done, splitting\n", cmd);
         char cmd_cpy[255];
-        strncpy(cmd_cpy,cmd, strlen(cmd));
+        strcpy(cmd_cpy, cmd);
         argv = split(cmd, " ");
         //printf("Debug loop\n");
         //int indx = 0;
@@ -37,10 +37,10 @@ int main() {
 
 
         /*TODO catch signal 130 here (ctrl+ c) and pass to status*/
-        /*  if (strcmp(argv[0], "exit") == 0){
-                free(cmd);
+        if (strcmp(cmd_cpy, "exit") == 0){
+                free(argv);
                 exit(0);    
-         } */
+        }
         int fork_rc = fork();
 
         if(fork_rc < 0){
@@ -54,8 +54,11 @@ int main() {
             cmd_type = what_command(argc, argv);
             printf("CMD %s\n", cmd_cpy);
             printf("cmd_type: %d\n", cmd_type);
-            if ((cmd_type == REGULAR) && (strcmp(cmd, "exit") != 0)){
 
+
+
+            if (cmd_type == REGULAR){
+                
                 status = normal_execute(argc, argv); /*status depends on if this command ran okay*/
                                //free(cmd);
             } else if (cmd_type == OUTPUT_REDIRECT){
