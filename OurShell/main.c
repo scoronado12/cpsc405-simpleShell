@@ -22,20 +22,20 @@ void handler(int sig){
 int main() {
 
     signal(SIGINT, handler); 
-
+    int status = NULL;
         while (1){
             char **argv;
             char *dir = pwd();
             printf("[%s@nenbarsh %s]$ ", getenv("USER"), dir);
 
-            int status = NULL;
+            
 
             fgets(cmd, 100, stdin);
             cmd[strcspn(cmd, "\n")] = '\0';
            
 
 
-            printf("Readline %s done, splitting\n", cmd);
+            //printf("Readline %s done, splitting\n", cmd);
             char cmd_cpy[255];
             strcpy(cmd_cpy, cmd);
             argv = split(cmd, " ");
@@ -56,10 +56,11 @@ int main() {
             if (strcmp(cmd_cpy, "exit") == 0){
                     free(argv);
                     exit(0);    
-            }
+            } 
 
              if (feof(stdin)){
                 printf("Ctrl + D\n");
+                close(stdout);
                 exit(0); 
             }
      
@@ -79,9 +80,14 @@ int main() {
                 printf("CMD %s\n", cmd_cpy);
                 printf("cmd_type: %d\n", cmd_type);
 
-
-
-                if (cmd_type == REGULAR){
+                if (strcmp(cmd_cpy, "dog") == 0){
+                    printf("  __      _\n");
+                    printf("o'')}____//\n");
+                    printf(" `_/      )\n");
+                    printf(" (_(_/-(_/\n");
+                    status = 0;
+                    
+                } else if (cmd_type == REGULAR){
                     
                     status = normal_execute(argc, argv); /*status depends on if this command ran okay*/
                                    //free(cmd);
@@ -94,8 +100,8 @@ int main() {
                 }else if (cmd_type == INPUT_REDIRECT){
                    status = input_redir(cmd_cpy);
                 }else if (cmd_type == PIPE){
-                    //TODO
-                    pass;
+                    status = pipe_cmd(cmd_cpy);
+                    
                 }else if (cmd_type == BACKGROUND){
                     //TODO
                     pass;

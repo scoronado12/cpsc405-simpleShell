@@ -1,4 +1,4 @@
-enum cmd_types{REGULAR=0, OUTPUT_REDIRECT, INPUT_REDIRECT, PIPE, BACKGROUND};
+enum cmd_types{REGULAR=0, OUTPUT_REDIRECT, INPUT_REDIRECT, PIPE, BACKGROUND, DOG};
 char *pwd();
 char *sh_readline();
 char **split(char *str, char *tok);
@@ -8,3 +8,4 @@ int what_command(int argc, char **argv);
 int getIndxOf(char *delim, int argc, char **argv);
 int output_redir(char *line);
 int input_redir(char *line);
+int pipe_cmd(char* line);

@@ -107,7 +107,7 @@ int normal_execute(int argc, char **line){
  * 4 - run in background */
 int what_command(int argc, char **argv){
     int status = REGULAR; /*Assume regular command*/
-
+    
     for (int i = 0; i < argc; i++){
         if (strcmp(argv[i], ">") == 0){
 			printf("Output redirection\n");
@@ -127,7 +127,7 @@ int what_command(int argc, char **argv){
             status = BACKGROUND;
 			printf("Background\n");
             break;
-		}
+		} 
 
     }
 
@@ -244,4 +244,37 @@ int input_redir(char *line){
     free(cmd_split);
     return status; 
 
+}
+
+int pipe_cmd(char* line){
+    printf("Piping command: %s\n", line);
+    int status = -1;
+    int mode = 0;
+    int fd1[2];
+    int fd2[2];
+    pipe(fd1);
+    pipe(fd2);
+    char **line_split = split(line, "|"); /* The last index would be the recieving file */
+    char cmd_to_run[250];
+    char pipe_txt[255];
+    strncpy(cmd_to_run, line_split[0],strlen(line_split[0]) -1);
+    strcpy(pipe_txt, line_split[get_size(line_split)-1]);
+    memmove(&pipe_txt[0], &pipe_txt[1], strlen(pipe_txt) - 0);
+    printf("Running '%s' on '%s'\n", cmd_to_run, pipe_txt);
+    char **cmd_split = split(cmd_to_run, " ");
+    char **pipe_split = split(pipe_txt, " ");
+    int i = 0;
+    int in = 0;
+
+    while(cmd_split[i] != NULL){
+        printf("cmd line %d is '%s'\n", i, cmd_split[i]);
+        i++;
+    }
+    while(pipe_split[in] != NULL){
+        printf("pipe line %d is '%s'\n", in, pipe_split[in]);
+        in++;
+    }
+    free(pipe_split);
+    free(cmd_split);
+    return 0;
 }
