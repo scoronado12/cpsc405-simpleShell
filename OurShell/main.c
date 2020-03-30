@@ -9,16 +9,19 @@
 
 
 char cmd[255];
-/*  
+
 void handler(int sig){
-    if (sig == SIGINT){
-        printf("\n");
-    }
+    signal(SIGINT, handler);
+    printf("\n");
+    printf("[%s@nenbarsh %s]$ ", getenv("USER"), pwd());
+
+    fflush(stdout);
 }
-*/
+
 
 int main() {
 
+    signal(SIGINT, handler); 
 
         while (1){
             char **argv;
