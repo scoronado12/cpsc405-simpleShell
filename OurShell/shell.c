@@ -25,8 +25,6 @@ char *sh_readline(){
     size_t buffer_sz = 0;	
     getline(line, &buffer_sz, stdin);
     line[strlen(line) - 1] = '\0';
-	//char *pos = strchrnul(line, '\n');
-	//pos = '\0';
 
     return line;
 }
@@ -46,10 +44,8 @@ char** split(char *str, char *tok){
 	int i = 0;
 
 	while(token != NULL){
-        //printf("TOKS %s\n", token);
         str_array[i] = malloc(strlen(token)+1);
 	    strcpy(str_array[i], token);
-        //str_array[i] = token;
         
 		token = strtok(NULL, tok);
 	    i++;	
@@ -72,7 +68,6 @@ int get_size(char **line){
 
 //int normal_execute(int argc, char **line){
 int normal_execute(char **cmd_cpy){
-	//line[argc] = NULL; - eriq
     char cmd_cpy2[255];
     strcpy(cmd_cpy2, cmd_cpy);
     char **cmd_split = split(cmd_cpy2, " ");
@@ -114,42 +109,17 @@ int normal_execute(char **cmd_cpy){
  * 4 - run in background */
 //int what_command(int argc, char **argv){
 int what_command(char **cmd_cpy){
-    //printf("getting a NEW command\n");
     int status = REGULAR; /*Assume regular command*/
     char cmd_cpy2[255];
     strcpy(cmd_cpy2, cmd_cpy);
     char **cmd_split = split(cmd_cpy2, " ");
     int i = 0;
-    // what command will take in cmd cpy and split inside here.
-    /*for (int i = 0; i < argc; i++){
-        if (strcmp(argv[i], ">") == 0){
-			printf("Output redirection\n");
-            status = OUTPUT_REDIRECT;
-            break;
-		} else if (strcmp(argv[i],"<") == 0){
-            status = INPUT_REDIRECT;
-			printf("Input redirection\n");
-            break;
-		} else if (strcmp(argv[i], "|") == 0){
-            status = PIPE;
-			printf("pipe!\n");
-            break;
-		}else if (strcmp(argv[i], "&") == 0){
-            /* https://stackoverflow.com/questions/8319484/regarding-background-processes-using-fork-and-child-processes-in-my-dummy-shel
-             ^/
-            status = BACKGROUND;
-			printf("Background\n");
-            break;
-		} 
 
-    }*/
     while(cmd_split[i] != NULL){
         i++;
     }
-    //printf("i was: %d\n", i);
     i = 0;
     while(cmd_split[i] != NULL){
-        //printf("cmd_split[%d]: %s\n", i, cmd_split[i]);
         if(strcmp(cmd_split[i], ">")== 0){
             printf("Output redirection\n");
             status = OUTPUT_REDIRECT;
@@ -171,7 +141,6 @@ int what_command(char **cmd_cpy){
 		}
         i++;
     }
-    //printf("status is %d\n", status);
     return status;
 }
 
@@ -199,28 +168,14 @@ int output_redir(char *line){
     int status = -1; //assume it never ran
     int mode = 0;
 
-    // start of eriq shitty code
     char **line_split = split(line, ">"); /* The last index would be the recieving file */
     char cmd_to_run[250];
     char file_name[255];
     strncpy(cmd_to_run, line_split[0],strlen(line_split[0]) -1);
     strcpy(file_name, line_split[get_size(line_split)-1]);
     memmove(&file_name[0], &file_name[1], strlen(file_name) - 0);
-    //printf("Running '%s' on '%s'\n", cmd_to_run, pipe_txt);
     char **cmd_split = split(cmd_to_run, " ");
-    char **pipe_split = split(file_name, " ");
-    //end of eriq shitty code
-    /*
-    char **line_split = split(line, ">"); /* The last index would be the recieving file //
-    char cmd_to_run[250];
-    char file_name[255];
-     
-    strncpy(cmd_to_run, line_split[0],strlen(line_split[0]) -1);
-    
-    /* TODO split cmd string and dumpoutput into file_name //
-    int str_size = 0;
-    strcpy(file_name, line_split[get_size(line_split)-1]);
-    */
+
     int str_size = 0;
     for (int i = 0; file_name[i] != NULL; i++){
         if (file_name[i] != ' ')
@@ -231,8 +186,6 @@ int output_redir(char *line){
 
 
     free(line_split);
-
-    //char **cmd_split = split(cmd_to_run, " ");
 
     close(1);
     mode = O_WRONLY| O_CREAT;
@@ -263,23 +216,16 @@ int input_redir(char *line){
     int status = -1; //assume it never ran
     int mode = 0;
 
-    //start of eriq shitty code
     char **line_split = split(line, "<"); /* The last index would be the recieving file */
     char cmd_to_run[250];
     char file_name[255];
     strncpy(cmd_to_run, line_split[0],strlen(line_split[0]) -1);
     strcpy(file_name, line_split[get_size(line_split)-1]);
     memmove(&file_name[0], &file_name[1], strlen(file_name) - 0);
-    //printf("Running '%s' on '%s'\n", cmd_to_run, pipe_txt);
+
     char **cmd_split = split(cmd_to_run, " ");
     char **pipe_split = split(file_name, " ");
-    //end of eriq shitty code
-    /*
-    char **line_split = split(line, "<"); /* The last index would be the recieving file 
-    char cmd_to_run[250];
-    char file_name[255];
-    
-    */
+
     int str_size = 0;
     strcpy(file_name, line_split[get_size(line_split)-1]);
     for (int i = 0; file_name[i] != NULL; i++){
@@ -290,7 +236,6 @@ int input_redir(char *line){
 
     free(line_split);
 
-    //char **cmd_split = split(cmd_to_run, " ");
     close(0);
     mode = O_RDONLY;
     file_name[strlen(file_name) -1] = '\0';
@@ -326,22 +271,8 @@ int pipe_cmd(char* line){
     strncpy(cmd_to_run, line_split[0],strlen(line_split[0]) -1);
     strcpy(pipe_txt, line_split[get_size(line_split)-1]);
     memmove(&pipe_txt[0], &pipe_txt[1], strlen(pipe_txt) - 0);
-    //printf("Running '%s' on '%s'\n", cmd_to_run, pipe_txt);
     char **cmd_split = split(cmd_to_run, " ");
     char **pipe_split = split(pipe_txt, " ");
-
-    //int i = 0;
-    //int in = 0;
-    /*
-    while(cmd_split[i] != NULL){
-        printf("cmd line %d is '%s'\n", i, cmd_split[i]);
-        i++;
-    }
-    while(pipe_split[in] != NULL){
-        printf("pipe line %d is '%s'\n", in, pipe_split[in]);
-        in++;
-    }
-    */
    
     if(pipe(fd) == -1){
         printf("fork fail");
@@ -354,7 +285,6 @@ int pipe_cmd(char* line){
         _exit(0);
     }
     if(childPid == 0){
-        //printf("in child\n");
         dup2(fd[1],1);
         close(fd[0]);
         close(fd[1]);
@@ -378,12 +308,7 @@ int pipe_cmd(char* line){
             _exit(0);
         }
     }
-    /*
-    int fp = execvp(cmd_split[0], cmd_split);
-    printf("fp is: %d", fp);
-    free(cmd_split);
-    free(line);*/
-    //printf("what is going on\n");
+
     _exit(0);
     return 0;
     

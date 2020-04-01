@@ -30,27 +30,13 @@ int main() {
             char *dir = pwd();
             printf("[%s@nenbarsh %s]$ ", getenv("USER"), dir);
 
-            
-
             fgets(cmd, 100, stdin);
             cmd[strcspn(cmd, "\n")] = '\0';
            
-
-
-            //printf("Readline %s done, splitting\n", cmd);
             char cmd_cpy[255];
             strcpy(cmd_cpy, cmd);
             argv = split(cmd, " ");
             int argc = get_size(argv);
-
-            //printf("Debug loop\n");
-            /*int indx = 0;
-             
-            while (argv[indx] != NULL){
-                printf("argv[%d] = %s\n", indx, argv[indx]);
-                indx++;
-            }
-            */
 
 
 
@@ -76,7 +62,6 @@ int main() {
                 
             } else {
 
-                //printf("hello\n");
                 int fork_rc = fork();
 
                 if(fork_rc < 0){
@@ -84,13 +69,7 @@ int main() {
                     exit(-1);
                 }
                 if (fork_rc == 0){
-                //printf("Forked to parse\n");
-                //int cmd_type = -1;
-                    //printf("command is: '%s'\n", cmd);
-                    //printf("command copy is: '%s'\n", cmd_cpy);
 
-                    //printf("CMD %s\n", cmd_cpy);
-                    //printf("cmd_type: %d\n", cmd_type);
 
                     if (cmd_type == REGULAR){
                         if (strcmp(cmd_cpy, "dog") == 0){
