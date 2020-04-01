@@ -262,41 +262,46 @@ int output_redir(char *line){
 int input_redir(char *line){
     int status = -1; //assume it never ran
     int mode = 0;
+
+    //start of eriq shitty code
     char **line_split = split(line, "<"); /* The last index would be the recieving file */
     char cmd_to_run[250];
     char file_name[255];
-    int i = 0;
+    strncpy(cmd_to_run, line_split[0],strlen(line_split[0]) -1);
+    strcpy(file_name, line_split[get_size(line_split)-1]);
+    memmove(&file_name[0], &file_name[1], strlen(file_name) - 0);
+    //printf("Running '%s' on '%s'\n", cmd_to_run, pipe_txt);
+    char **cmd_split = split(cmd_to_run, " ");
+    char **pipe_split = split(file_name, " ");
+    //end of eriq shitty code
+    /*
+    char **line_split = split(line, "<"); /* The last index would be the recieving file 
+    char cmd_to_run[250];
+    char file_name[255];
     
-    
+    */
     int str_size = 0;
     strcpy(file_name, line_split[get_size(line_split)-1]);
     for (int i = 0; file_name[i] != NULL; i++){
         if (file_name[i] != ' ')
             file_name[str_size++] = file_name[i];
     }
-    strcpy(cmd_to_run, line_split[0]);
-    cmd_to_run[strlen(cmd_to_run) - 1] = '\0';
-    file_name[str_size] = '\0';
-    printf("file name is: '%s'\n", file_name);
-    printf("cmd to run is: '%s'\n", cmd_to_run);
+
 
     free(line_split);
 
-    char **cmd_split = split(cmd_to_run, " ");
+    //char **cmd_split = split(cmd_to_run, " ");
     close(0);
     mode = O_RDONLY;
-
+    file_name[strlen(file_name) -1] = '\0';
+    printf("filename: '%s'\n", file_name);
     if (open(file_name, mode, S_IRUSR| S_IWUSR| S_IRGRP | S_IROTH) < 0){
         fprintf(stderr, "Opening of %s failed!\n" ,file_name);
         free(cmd_split);
         return status;
     }
-    printf("file opened\n");
-    while(cmd_split[i] != NULL){
-        printf("cmd_split[%d]: '%s'\n", i, cmd_split[i]);
-        i++;
-    }
-    int exec = execvp(cmd_to_run, cmd_to_run);
+
+    int exec = execvp(cmd_split[0], cmd_split);
     if (exec == -1){
         status = -1;
     } else {
