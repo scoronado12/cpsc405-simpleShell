@@ -70,26 +70,33 @@ int get_size(char **line){
 
 /*Parses Through the array and decides what to do with it*/
 
-int normal_execute(int argc, char **line){
-	line[argc] = NULL;
+//int normal_execute(int argc, char **line){
+int normal_execute(char **cmd_cpy){
+	//line[argc] = NULL; - eriq
+    char cmd_cpy2[255];
+    strcpy(cmd_cpy2, cmd_cpy);
+    char **cmd_split = split(cmd_cpy2, " ");
+    int i = 0;
     int built_in_status = -1;
 	/**leave if parsed command is blank**/
-	if (strcmp(line[0],"") == 0){
+	if (strcmp(cmd_split[0],"") == 0){
 		return 0; 
     }
 
 
 
-    if (strcmp(line[0], "cd") == 0){
-      built_in_status = chdir(line[1]);
+    if (strcmp(cmd_split[0], "cd") == 0){
+      built_in_status = chdir(cmd_split[1]);
       if (built_in_status == -1)
          return -1;
      return built_in_status; 
     }
 
-    int fp = execvp(line[0],line);
+    int fp = execvp(cmd_split[0],cmd_split);
+
     if (fp == -1){
         fprintf(stderr, "nenbarsh: %s \n", strerror(errno));
+        _exit(0);
         return -1;
     }
     free(line);    
@@ -105,10 +112,16 @@ int normal_execute(int argc, char **line){
  * 2 - redirect input
  * 3 - pipe
  * 4 - run in background */
-int what_command(int argc, char **argv){
+//int what_command(int argc, char **argv){
+int what_command(char **cmd_cpy){
+    //printf("getting a NEW command\n");
     int status = REGULAR; /*Assume regular command*/
-    
-    for (int i = 0; i < argc; i++){
+    char cmd_cpy2[255];
+    strcpy(cmd_cpy2, cmd_cpy);
+    char **cmd_split = split(cmd_cpy2, " ");
+    int i = 0;
+    // what command will take in cmd cpy and split inside here.
+    /*for (int i = 0; i < argc; i++){
         if (strcmp(argv[i], ">") == 0){
 			printf("Output redirection\n");
             status = OUTPUT_REDIRECT;
@@ -123,14 +136,42 @@ int what_command(int argc, char **argv){
             break;
 		}else if (strcmp(argv[i], "&") == 0){
             /* https://stackoverflow.com/questions/8319484/regarding-background-processes-using-fork-and-child-processes-in-my-dummy-shel
-             */
+             ^/
             status = BACKGROUND;
 			printf("Background\n");
             break;
 		} 
 
+    }*/
+    while(cmd_split[i] != NULL){
+        i++;
     }
-
+    //printf("i was: %d\n", i);
+    i = 0;
+    while(cmd_split[i] != NULL){
+        //printf("cmd_split[%d]: %s\n", i, cmd_split[i]);
+        if(strcmp(cmd_split[i], ">")== 0){
+            printf("Output redirection\n");
+            status = OUTPUT_REDIRECT;
+            break;
+        }else if (strcmp(cmd_split[i],"<") == 0){
+            status = INPUT_REDIRECT;
+			printf("Input redirection\n");
+            break;
+		} else if (strcmp(cmd_split[i], "|") == 0){
+            status = PIPE;
+			printf("pipe!\n");
+            break;
+		}else if (strcmp(cmd_split[i], "&") == 0){
+            /* https://stackoverflow.com/questions/8319484/regarding-background-processes-using-fork-and-child-processes-in-my-dummy-shel
+             */
+            status = BACKGROUND;
+			printf("Background\n");
+            break;
+		}
+        i++;
+    }
+    //printf("status is %d\n", status);
     return status;
 }
 
@@ -154,18 +195,33 @@ int getIndxOf(char *delim, int argc, char **argv){
  * Output Redirection */
 
 int output_redir(char *line){
+
     int status = -1; //assume it never ran
     int mode = 0;
+
+    // start of eriq shitty code
     char **line_split = split(line, ">"); /* The last index would be the recieving file */
+    char cmd_to_run[250];
+    char file_name[255];
+    strncpy(cmd_to_run, line_split[0],strlen(line_split[0]) -1);
+    strcpy(file_name, line_split[get_size(line_split)-1]);
+    memmove(&file_name[0], &file_name[1], strlen(file_name) - 0);
+    //printf("Running '%s' on '%s'\n", cmd_to_run, pipe_txt);
+    char **cmd_split = split(cmd_to_run, " ");
+    char **pipe_split = split(file_name, " ");
+    //end of eriq shitty code
+    /*
+    char **line_split = split(line, ">"); /* The last index would be the recieving file //
     char cmd_to_run[250];
     char file_name[255];
      
     strncpy(cmd_to_run, line_split[0],strlen(line_split[0]) -1);
     
-    /* TODO split cmd string and dumpoutput into file_name */
+    /* TODO split cmd string and dumpoutput into file_name //
     int str_size = 0;
     strcpy(file_name, line_split[get_size(line_split)-1]);
-    
+    */
+    int str_size = 0;
     for (int i = 0; file_name[i] != NULL; i++){
         if (file_name[i] != ' ')
             file_name[str_size++] = file_name[i];
@@ -176,7 +232,8 @@ int output_redir(char *line){
 
     free(line_split);
 
-    char **cmd_split = split(cmd_to_run, " ");
+    //char **cmd_split = split(cmd_to_run, " ");
+
     close(1);
     mode = O_WRONLY| O_CREAT;
 
@@ -205,21 +262,23 @@ int output_redir(char *line){
 int input_redir(char *line){
     int status = -1; //assume it never ran
     int mode = 0;
-    char **line_split = split(line, ">"); /* The last index would be the recieving file */
+    char **line_split = split(line, "<"); /* The last index would be the recieving file */
     char cmd_to_run[250];
     char file_name[255];
-     
+    int i = 0;
+    
     
     int str_size = 0;
     strcpy(file_name, line_split[get_size(line_split)-1]);
-    
     for (int i = 0; file_name[i] != NULL; i++){
         if (file_name[i] != ' ')
             file_name[str_size++] = file_name[i];
     }
-
+    strcpy(cmd_to_run, line_split[0]);
+    cmd_to_run[strlen(cmd_to_run) - 1] = '\0';
     file_name[str_size] = '\0';
-
+    printf("file name is: '%s'\n", file_name);
+    printf("cmd to run is: '%s'\n", cmd_to_run);
 
     free(line_split);
 
@@ -232,9 +291,12 @@ int input_redir(char *line){
         free(cmd_split);
         return status;
     }
-    
-
-    int exec = execvp(cmd_split[0], cmd_split);
+    printf("file opened\n");
+    while(cmd_split[i] != NULL){
+        printf("cmd_split[%d]: '%s'\n", i, cmd_split[i]);
+        i++;
+    }
+    int exec = execvp(cmd_to_run, cmd_to_run);
     if (exec == -1){
         status = -1;
     } else {
@@ -247,25 +309,25 @@ int input_redir(char *line){
 }
 
 int pipe_cmd(char* line){
-    printf("Piping command: %s\n", line);
+    //printf("Piping command: %s\n", line);
     int status = -1;
     int mode = 0;
-    int fd1[2];
-    int fd2[2];
-    pipe(fd1);
-    pipe(fd2);
+    pid_t childPid;
+    int fd[2];
+    pipe(fd);
     char **line_split = split(line, "|"); /* The last index would be the recieving file */
     char cmd_to_run[250];
     char pipe_txt[255];
     strncpy(cmd_to_run, line_split[0],strlen(line_split[0]) -1);
     strcpy(pipe_txt, line_split[get_size(line_split)-1]);
     memmove(&pipe_txt[0], &pipe_txt[1], strlen(pipe_txt) - 0);
-    printf("Running '%s' on '%s'\n", cmd_to_run, pipe_txt);
+    //printf("Running '%s' on '%s'\n", cmd_to_run, pipe_txt);
     char **cmd_split = split(cmd_to_run, " ");
     char **pipe_split = split(pipe_txt, " ");
-    int i = 0;
-    int in = 0;
 
+    //int i = 0;
+    //int in = 0;
+    /*
     while(cmd_split[i] != NULL){
         printf("cmd line %d is '%s'\n", i, cmd_split[i]);
         i++;
@@ -274,7 +336,72 @@ int pipe_cmd(char* line){
         printf("pipe line %d is '%s'\n", in, pipe_split[in]);
         in++;
     }
-    free(pipe_split);
+    */
+   
+    if(pipe(fd) == -1){
+        printf("fork fail");
+        error("fork failed\n");
+        _exit(0);
+    }
+    childPid = fork();
+    if(childPid < 0){
+        printf("fork failed\n");
+        _exit(0);
+    }
+    if(childPid == 0){
+        //printf("in child\n");
+        dup2(fd[1],1);
+        close(fd[0]);
+        close(fd[1]);
+        int fp = execvp(cmd_split[0],cmd_split);
+        if(fp == -1){
+            printf("failed to execute child\n");
+            _exit(0);
+        }
+        error("failed to exec command 1");
+        _exit(0);
+
+    } else {
+        int status = 0;
+        dup2(fd[0],0);
+        close(fd[0]);
+        close(fd[1]);
+        fflush(0);
+        int exec = execvp(pipe_split[0], pipe_split);
+        if(exec == -1){
+            printf("failed again");
+            _exit(0);
+        }
+    }
+    /*
+    int fp = execvp(cmd_split[0], cmd_split);
+    printf("fp is: %d", fp);
     free(cmd_split);
+    free(line);*/
+    //printf("what is going on\n");
+    _exit(0);
+    return 0;
+    
+}
+
+int background_cmd(char *line){
+    char line_cpy[255];
+    strcpy(line_cpy, line);
+    int linelen = strlen(line_cpy);
+    line_cpy[linelen -1] = '\0';
+    linelen = strlen(line_cpy);
+    line_cpy[linelen -1] = '\0';
+    linelen = strlen(line_cpy);
+    char **cmd_line = split(line_cpy, " ");
+    int j = 0;
+
+    printf("[+]%d\n", getpid());
+    if (execvp(cmd_line[0], cmd_line) == -1){
+        printf("[-]%d\n", getpid());
+        _exit(0);
+        return -1;
+    }
+    
+
     return 0;
 }
